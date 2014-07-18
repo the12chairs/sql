@@ -51,5 +51,13 @@ INSERT INTO friends (id_friend, id_user) VALUES (2, 1);
 UPDATE friends SET accepted = true WHERE accepted =false AND id_friend = 2;
 
 SELECT * FROM photos WHERE id_album = (SELECT id_album FROM albums ORDER BY rand() LIMIT 1) LIMIT 10 OFFSET 40;
-;
+
+
+UPDATE users SET login = "Pwned" WHERE id_user = 1;
+
+
+UPDATE albums SET name_album = "Pwned" WHERE id_album = 1;
+
+UPDATE photos SET private = true WHERE id_photo = 1;
+
 
