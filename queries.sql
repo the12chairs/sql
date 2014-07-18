@@ -46,3 +46,7 @@ CREATE TABLE album_link (
 
 
 
+-- ДрУзЯфФкИ ^________^
+INSERT INTO friends (id_friend, id_user) VALUES (2, 1);
+UPDATE friends SET accepted = true WHERE accepted =false AND id_friend = 2;
+
