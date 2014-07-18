@@ -50,3 +50,6 @@ CREATE TABLE album_link (
 INSERT INTO friends (id_friend, id_user) VALUES (2, 1);
 UPDATE friends SET accepted = true WHERE accepted =false AND id_friend = 2;
 
+SELECT * FROM photos WHERE id_album = (SELECT id_album FROM albums ORDER BY rand() LIMIT 1) LIMIT 10 OFFSET 40;
+;
+
