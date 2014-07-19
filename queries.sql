@@ -28,13 +28,11 @@ CREATE TABLE albums (
 CREATE TABLE photos (
         id_photo INT(255) AUTO_INCREMENT PRIMARY KEY,
         picture VARCHAR(255) NOT NULL,
-        id_album INT(255) NOT NULL,
         id_user INT(255) NOT NULL,
         created TIMESTAMP DEFAULT 0,
         updated TIMESTAMP DEFAULT 0 ON UPDATE now(),
         private BOOLEAN DEFAULT true NOT NULL,
-        FOREIGN KEY (id_user) REFERENCES users(id_user),
-        FOREIGN KEY (id_album) REFERENCES albums(id_album)
+        FOREIGN KEY (id_user) REFERENCES users(id_user)
         ) ENGINE=InnoDB;
 
 CREATE TABLE album_link (
@@ -46,12 +44,56 @@ CREATE TABLE album_link (
 
 
 
+
+MariaDB [instaclone]> INSERT INTO users (login, email, password) VALUES ("vasya", "vasya@vasya.vasya", "11111");
+Query OK, 1 row affected (0.00 sec)
+
+MariaDB [instaclone]> INSERT INTO users (login, email, password) VALUES ("petya", "vasya@vasya.vasya", "11111");
+Query OK, 1 row affected (0.01 sec)
+
+MariaDB [instaclone]> INSERT INTO users (login, email, password) VALUES ("Boka", "vasya@vasya.vasya", "11111");
+Query OK, 1 row affected (0.01 sec)
+
+MariaDB [instaclone]> INSERT INTO users (login, email, password) VALUES ("Joka", "vasya@vasya.vasya", "11111");
+Query OK, 1 row affected (0.01 sec)
+
+MariaDB [instaclone]> INSERT INTO albums (id_user, name_album) VALUES (1, "Ya i moya sranaya koshka");
+Query OK, 1 row affected (0.02 sec)
+
+MariaDB [instaclone]> INSERT INTO albums (id_user, name_album) VALUES (1, "Ya bez koshki");
+Query OK, 1 row affected (0.00 sec)
+
+MariaDB [instaclone]> INSERT INTO albums (id_user, name_album) VALUES (2, "S morya");
+Query OK, 1 row affected (0.01 sec)
+
+MariaDB [instaclone]> INSERT INTO albums (id_user, name_album) VALUES (2, "Svad''ba");
+Query OK, 1 row affected (0.01 sec)
+
+
+
+MariaDB [instaclone]>  INSERT INTO photos (picture, id_album, id_user, private) VALUES ("1.jpg", 1, 1, false);
+ERROR 1054 (42S22): Unknown column 'id_album' in 'field list'
+MariaDB [instaclone]>  INSERT INTO photos (picture, id_user, private) VALUES ("1.jpg", 1, false);
+Query OK, 1 row affected (0.01 sec)
+
+MariaDB [instaclone]>  INSERT INTO photos (picture, id_user, private) VALUES ("2.jpg", 1, false);
+Query OK, 1 row affected (0.01 sec)
+
+MariaDB [instaclone]>  INSERT INTO photos (picture, id_user, private) VALUES ("2.jpg", 1, true);
+Query OK, 1 row affected (0.00 sec)
+
+MariaDB [instaclone]>  INSERT INTO photos (picture, id_user, private) VALUES ("xxx.jpg", 2, true);
+Query OK, 1 row affected (0.00 sec)
+
+
+
 -- ДрУзЯфФкИ ^________^
 INSERT INTO friends (id_friend, id_user) VALUES (2, 1);
 UPDATE friends SET accepted = true WHERE accepted =false AND id_friend = 2;
 
-SELECT * FROM photos WHERE id_album = (SELECT id_album FROM albums ORDER BY rand() LIMIT 1) LIMIT 10 OFFSET 40;
 
+-- Случайный альбом конкретного юзера с id_user = 1
+SELECT * FROM photos WHERE id_user = 1 AND id_album = (SELECT id_album FROM albums ORDER BY rand() LIMIT 1) LIMIT 10 OFFSET 40;
 
 UPDATE users SET login = "Pwned" WHERE id_user = 1;
 
@@ -61,3 +103,5 @@ UPDATE albums SET name_album = "Pwned" WHERE id_album = 1;
 UPDATE photos SET private = true WHERE id_photo = 1;
 
 
+-- Проверка на непринадлежность фото к альбому пользователя и к самому пользователю, проверка привата. Совпала - удаление
+DELETE * FROM album_link WHERE id_album NOT IN (SELECT id_album FROM albums WHERE id_user = 2) AND id_photo IN (SELECT id_photo FROM photos WHERE id_user = 2 AND private = true); 
