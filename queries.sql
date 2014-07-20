@@ -111,7 +111,7 @@ DELETE * FROM photos WHERE id_photo NOT IN (SELECT id_photo FROM album_link);
 
 
 
-SELECT * FROM albums WHERE id_user IN (SELECT id_friend FROM friends WHERE id_user = 2);
+SELECT * FROM albums WHERE id_user IN (SELECT id_friend FROM friends WHERE id_user = 2 AND accepted = true);
 
 -- Выводит фото и пользователя, который может ее посмотреть. Логика такая: Если фото не приват, то видят все. Приватные фото может видеть только владелец фото
 SELECT picture, users.login FROM photos INNER JOIN users WHERE private = false OR users.id_user = photos.id_photo;
@@ -127,3 +127,27 @@ CREATE INDEX user_name ON users (login (20));
 CREATE INDEX user_name ON users (login (20));
 
 CREATE INDEX ind ON photos (id_user);
+
+CREATE INDEX usr_alb ON albums (id_user);
+
+
+-- Hometask
+
+-- 3
+SELECT picture FROM photos WHERE id_photo IN (SELECT id_photo FROM album_link WHERE id_album = (SELECT id_album FROM albums WHERE id_user = 1 ORDER BY rand() LIMIT 1));
+-- 4 
+SELECT picture FROM photos WHERE id_photo IN (SELECT id_photo FROM album_link WHERE id_album IN (SELECT id_album FROM albums WHERE id_user = 1));
+
+-- 5 Hardcore mod = on
+
+
+SELECT DISTINCT id_photo, picture FROM photos WHERE id_photo IN (SELECT id_photo FROM album_link WHERE id_album IN (SELECT id_album FROM albums WHERE id_user IN (SELECT id_friend FROM friends WHERE id_user = 2 AND accepted = true))) AND NOT IN (SELECT id_photo FROM photos WHERE id_photo IN (SELECT id_photo FROM album_link WHERE id_album IN (SELECT id_album FROM albums WHERE id_user = 2)));
+
+
+-- or
+
+SELECT DISTINCT photos.id_photo, picture FROM photos INNER JOIN album_link ON album_link.id_photo = photos.id_photo INNER JOIN albums ON albums.id_album = album_link.id_album INNER JOIN users ON users.id_user = albums.id_user INNER JOIN friends ON friends.id_user = 2 AND accepted = true WHERE albums.id_user != 1;
+
+-- Первый мне нравится больше, там лучше ясна логика запроса. Но по какой-то причине ошибка синтаксиса в конъюнкции подзапросов
+
+-- hardcore mod = off
