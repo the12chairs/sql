@@ -105,3 +105,25 @@ UPDATE photos SET private = true WHERE id_photo = 1;
 
 -- Проверка на непринадлежность фото к альбому пользователя и к самому пользователю, проверка привата. Совпала - удаление
 DELETE * FROM album_link WHERE id_album NOT IN (SELECT id_album FROM albums WHERE id_user = 2) AND id_photo IN (SELECT id_photo FROM photos WHERE id_user = 2 AND private = true); 
+
+-- 8
+DELETE * FROM photos WHERE id_photo NOT IN (SELECT id_photo FROM album_link);
+
+
+
+SELECT * FROM albums WHERE id_user IN (SELECT id_friend FROM friends WHERE id_user = 2);
+
+-- Выводит фото и пользователя, который может ее посмотреть. Логика такая: Если фото не приват, то видят все. Приватные фото может видеть только владелец фото
+SELECT picture, users.login FROM photos INNER JOIN users WHERE private = false OR users.id_user = photos.id_photo;
+
+
+
+-- Index
+
+CREATE INDEX part_pic ON photos (picture (20));
+
+CREATE INDEX user_name ON users (login (20));
+
+CREATE INDEX user_name ON users (login (20));
+
+CREATE INDEX ind ON photos (id_user);
